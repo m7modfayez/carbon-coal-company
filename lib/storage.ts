@@ -2,6 +2,7 @@ import { createClient } from "@supabase/supabase-js";
 import { supabaseBrowser } from "./supabase";
 import { ProductInsert } from "@/types";
 import { v4 as uuidv4 } from "uuid";
+import {APP_ID} from "./app-config";
 
 
 /**
@@ -53,7 +54,7 @@ export async function getProducts() {
   const supabase = getServerClient();
   const { data, error } = await supabase
     .from("products")
-    .select("*")
+    .select("*").eq("app_id", APP_ID)
     .order("created_at", { ascending: false });
   if (error) throw error;
   return data;
@@ -65,6 +66,7 @@ export async function getProductById(id: string) {
     .from("products")
     .select("*")
     .eq("id", id)
+    .eq("app_id", APP_ID)
     .single();
   if (error) return null;
   return data;
@@ -74,7 +76,10 @@ export async function addProduct(product: ProductInsert) {
   const supabase = getServerClient();
   const { data, error } = await supabase
     .from("products")
-    .insert(product)
+    .insert({
+      ...product,
+      app_id: APP_ID,
+      })
     .select()
     .single();
   if (error) throw error;
@@ -90,6 +95,7 @@ export async function updateProduct(
     .from("products")
     .update(updates)
     .eq("id", id)
+    .eq("app_id", APP_ID)
     .select()
     .single();
   if (error) return null;
@@ -102,6 +108,7 @@ export async function deleteProduct(id: string) {
     .from("products")
     .select("image_urls")
     .eq("id", id)
+    .eq("app_id", APP_ID)
     .single();
 
   if (fetchError) return false;
