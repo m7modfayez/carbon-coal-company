@@ -6,6 +6,8 @@ import {
   deleteProduct,
 } from "@/lib/storage";
 
+export const dynamic = 'force-dynamic';
+
 /**
  * GET /api/products
  * Fetch all products
